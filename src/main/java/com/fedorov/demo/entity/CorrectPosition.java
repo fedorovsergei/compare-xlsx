@@ -1,4 +1,4 @@
-package com.example.demo.entity;
+package com.fedorov.demo.entity;
 
 import lombok.Builder;
 import lombok.Data;

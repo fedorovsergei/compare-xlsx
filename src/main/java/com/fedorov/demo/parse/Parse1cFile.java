@@ -1,6 +1,6 @@
-package com.example.demo.parse;
+package com.fedorov.demo.parse;
 
-import com.example.demo.entity.CorrectPosition;
+import com.fedorov.demo.entity.CorrectPosition;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
@@ -15,8 +15,7 @@ import java.util.Map;
 
 @Component
 @Slf4j
-public class ParsePepsiFile {
-//    private File file = new File("D:/Downloads/parse/demo/src/main/resources/тара расшифрока 200248248.XLSX");
+public class Parse1cFile {
 
     @SneakyThrows
     public Map<String, CorrectPosition> parse(String file) {
@@ -26,23 +25,32 @@ public class ParsePepsiFile {
             XSSFSheet sheet = workbook.getSheetAt(0);
 
             for (Row row : sheet) {
-                Cell cellName = row.getCell(6);
-                Cell cellCount = row.getCell(8);
+                Cell cellName = row.getCell(4);
+                Cell cellCountPlus = row.getCell(6);
+                Cell cellCountMinus = row.getCell(7);
                 try {
                     String name = parseName(cellName.getStringCellValue());
                     if (name.isEmpty()) continue;
-                    CorrectPosition correctPosition = CorrectPosition.builder().code(cellName.getStringCellValue()).count(cellCount.getNumericCellValue()).build();
+                    double count = (cellCountPlus == null || cellCountPlus.getNumericCellValue() == 0.0) ? cellCountMinus.getNumericCellValue() * -1 : cellCountPlus.getNumericCellValue();
+                    CorrectPosition correctPosition = CorrectPosition.builder().code(name).count(count).build();
                     result.merge(name, correctPosition, (first, second) ->
                             CorrectPosition.builder().code(first.getCode()).count(first.getCount() + second.getCount()).build());
                 } catch (Exception e) {
-                    log.warn("Не обработана строчка с параметрами {}, {}", cellName, cellCount);
+                    log.warn("Не обработана строчка с параметрами {}, {}, {}", cellName, cellCountPlus, cellCountMinus);
                 }
+
             }
         }
         return result;
     }
 
     private String parseName(String stringCellValue) {
-        return stringCellValue.replaceAll("[a-zA-Zа-яА-Я]*", "");
+        String[] a = stringCellValue.split(" ");
+        for (String s : a) {
+            if (s.contains("/")) {
+                return s.replaceAll("[a-zA-Zа-яА-Я]*", "");
+            }
+        }
+        return "";
     }
 }

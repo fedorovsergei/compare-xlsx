@@ -1,8 +1,8 @@
-package com.example.demo.controller;
+package com.fedorov.demo.controller;
 
-import com.example.demo.entity.CorrectPosition;
-import com.example.demo.parse.Parse1cFile;
-import com.example.demo.parse.ParsePepsiFile;
+import com.fedorov.demo.entity.CorrectPosition;
+import com.fedorov.demo.parse.Parse1cFile;
+import com.fedorov.demo.parse.ParsePepsiFile;
 import com.google.common.collect.Sets;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
